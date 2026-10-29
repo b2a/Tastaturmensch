@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tastaturmensch – Windows-Tastenkombinationen lernen</title>
+  <meta name="description" content="Kurzes Quiz, dann eine persönliche Lernreise durch die wichtigsten Windows-Tastenkombinationen – direkt im Browser ausprobieren.">
+  <meta name="theme-color" content="#f6f5f2">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='4' width='28' height='24' rx='6' fill='%233b5bdb'/%3E%3Ctext x='16' y='22' font-family='system-ui,sans-serif' font-size='15' font-weight='700' text-anchor='middle' fill='white'%3ET%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#/"><span class="brand-key" aria-hidden="true">T</span><span>Tastaturmensch</span></a>
+      <nav class="topnav" aria-label="Hauptnavigation">
+        <a href="#/reise" data-nav="journey">Lernreise</a>
+        <a href="#/spickzettel" data-nav="cheatsheet">Spickzettel</a>
+      </nav>
+      <a class="progress-pill" id="progress-pill" href="#/reise" hidden></a>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1"></main>
+
+  <div class="toast-region" id="toasts" aria-live="polite"></div>
+
+  <noscript><p class="noscript">Diese Lernseite braucht JavaScript.</p></noscript>
+
+  <!-- 1. Kern -->
+  <script src="js/core/tm.js"></script>
+  <script src="js/core/store.js"></script>
+  <script src="js/core/keys.js"></script>
+  <script src="js/core/ui.js"></script>
+  <script src="js/core/journey.js"></script>
+  <script src="js/components/keyboard.js"></script>
+
+  <!-- 2. Übungstypen (neue Typen hier ergänzen) -->
+  <script src="js/exercises/combo.js"></script>
+  <script src="js/exercises/text.js"></script>
+  <script src="js/exercises/explorer.js"></script>
+  <script src="js/exercises/windows.js"></script>
+  <script src="js/exercises/taskbar.js"></script>
+  <script src="js/exercises/switcher.js"></script>
+  <script src="js/exercises/browser.js"></script>
+
+  <!-- 3. Inhalte: Quiz + Kapitel (neue Kapitel hier ergänzen) -->
+  <script src="js/data/quiz.js"></script>
+  <script src="js/data/lessons/01-grundlagen.js"></script>
+  <script src="js/data/lessons/02-markieren.js"></script>
+  <script src="js/data/lessons/03-explorer.js"></script>
+  <script src="js/data/lessons/04-fenster.js"></script>
+  <script src="js/data/lessons/05-system.js"></script>
+  <script src="js/data/lessons/06-browser.js"></script>
+
+  <!-- 4. Ansichten + Start -->
+  <script src="js/views/home.js"></script>
+  <script src="js/views/quiz.js"></script>
+  <script src="js/views/result.js"></script>
+  <script src="js/views/journey.js"></script>
+  <script src="js/views/lesson.js"></script>
+  <script src="js/views/cheatsheet.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
