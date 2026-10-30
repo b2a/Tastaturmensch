@@ -48,7 +48,7 @@
     const known = new Set();
     const wrong = new Set();
 
-    TM.quiz.forEach((q) => {
+    TM.quizItems().forEach((q) => {
       const a = answers[q.id];
       if (!a) return;
       if (q.type === 'self') {

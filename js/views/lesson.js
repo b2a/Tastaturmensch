@@ -14,7 +14,16 @@
     render(main, { id }) {
       const lesson = TM.lesson(id);
       if (!lesson) {
-        main.innerHTML = `<section class="page"><h1>Lektion nicht gefunden</h1><p><a class="btn btn-primary" href="#/reise">Zur Lernreise</a></p></section>`;
+        const raw = TM.rawLesson(id);
+        const other = TM.platform.isMac() ? 'Windows' : 'Mac';
+        main.innerHTML = raw
+          ? `<section class="page"><p class="eyebrow">Lektion</p><h1>${esc(raw.title)}</h1>
+              <p class="lead">Diese Lektion gibt es nur für ${other}.</p>
+              <p class="hero-actions"><a class="btn btn-primary" href="#/reise">Zur Lernreise</a>
+              <button type="button" class="btn btn-ghost switch-platform">Auf ${other} umstellen</button></p></section>`
+          : `<section class="page"><h1>Lektion nicht gefunden</h1><p><a class="btn btn-primary" href="#/reise">Zur Lernreise</a></p></section>`;
+        const sw = main.querySelector('.switch-platform');
+        if (sw) sw.addEventListener('click', () => TM.app.setPlatform(TM.platform.isMac() ? 'win' : 'mac'));
         return null;
       }
       document.title = `${lesson.title} – Tastaturmensch`;
@@ -26,6 +35,7 @@
       const combos = allCombos(lesson);
       const usesReserved = ex && ex.virtualInput && combos.some((c) => TM.keys.isReserved(c));
       const dangerous = combos.some((c) => TM.keys.isDangerous(c));
+      const risky = combos.some((c) => TM.keys.risksUnload(c));
       const coarse = window.matchMedia('(pointer: coarse)').matches;
       const status = TM.journey.status(lesson);
       const levelName = TM.journey.LEVELS[lesson.level || 1].name;
@@ -56,7 +66,7 @@
             </div>
             ${
               usesReserved
-                ? `<div class="notice notice-sim"><p><strong>So übst du Kombis, die Windows oder der Browser abfangen:</strong> Klick die Sondertaste (z. B. ${kbd('Win')} oder ${kbd('Ctrl')}) bei „Gesucht“ oder auf der Bildschirmtastatur an – sie rastet ein. Dann drück die zweite Taste auf deiner Tastatur oder klick sie ebenfalls an.${dangerous ? ' <strong>Bitte nicht echt drücken:</strong> Das würde diese Seite schließen.' : ''}</p></div>`
+                ? `<div class="notice notice-sim"><p><strong>So übst du Kombis, die ${TM.platform.osName()} oder der Browser abfangen:</strong> Klick die Sondertaste (z. B. ${kbd('Win')} oder ${kbd(TM.platform.isMac() ? 'Fn' : 'Ctrl')}) bei „Gesucht“ oder auf der Bildschirmtastatur an – sie rastet ein. Dann drück die zweite Taste auf deiner Tastatur oder klick sie ebenfalls an.${dangerous ? ' <strong>Bitte nicht echt drücken:</strong> Das würde diese Seite schließen.' : ''}</p></div>`
                 : ''
             }
             ${!ex || ex.virtualInput || !coarse ? '' : '<div class="notice"><p>Für diese Übung brauchst du eine echte Tastatur – am Handy klappt sie leider nicht.</p></div>'}
@@ -78,7 +88,7 @@
           </nav>
         </article>`;
 
-      if (dangerous) TM.ui.guardUnload(true);
+      if (risky) TM.ui.guardUnload(true);
 
       const practice = main.querySelector('.practice');
       const stepsEl = main.querySelector('.steps');

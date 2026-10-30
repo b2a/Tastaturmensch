@@ -12,7 +12,7 @@
 
   function keyInner(tok) {
     const t = TM.keys.token(tok);
-    if (t === 'Win') return WIN_LOGO + '<span>Win</span>';
+    if (t === 'Win' && !(TM.platform && TM.platform.isMac())) return WIN_LOGO + '<span>Win</span>';
     return esc(TM.keys.label(t));
   }
 

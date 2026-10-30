@@ -13,6 +13,26 @@
     [/^#\/spickzettel$/, 'cheatsheet'],
   ];
 
+  function syncPlatformSwitch() {
+    const p = TM.platform.current();
+    document.querySelectorAll('[data-platform-btn]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.platformBtn === p)));
+  }
+
+  TM.app = {
+    refresh: () => route(),
+    setPlatform(p) {
+      if (p === TM.platform.current() && !TM.platform.isAuto()) return;
+      TM.platform.set(p);
+      syncPlatformSwitch();
+      route();
+      TM.ui.toast(p === 'mac' ? 'Alle Kombis jetzt für den <strong>Mac</strong>.' : 'Alle Kombis jetzt für <strong>Windows</strong>.');
+    },
+  };
+
+  document.querySelectorAll('[data-platform-btn]').forEach((b) =>
+    b.addEventListener('click', () => TM.app.setPlatform(b.dataset.platformBtn))
+  );
+
   TM.ui.updatePill = function () {
     const st = TM.store.get();
     const s = TM.journey.stats();
@@ -44,7 +64,7 @@
     TM.ui.guardUnload(false);
 
     const impl = TM.views[view];
-    document.title = impl.title && view !== 'home' ? `${impl.title} – Tastaturmensch` : 'Tastaturmensch – Windows-Tastenkombinationen lernen';
+    document.title = impl.title && view !== 'home' ? `${impl.title} – Tastaturmensch` : `Tastaturmensch – Tastenkombinationen für ${TM.platform.name()} lernen`;
     window.scrollTo(0, 0);
     main.classList.remove('view-enter');
     void main.offsetWidth;
@@ -60,5 +80,6 @@
   }
 
   window.addEventListener('hashchange', route);
+  syncPlatformSwitch();
   route();
 })(window.TM);

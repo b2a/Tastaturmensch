@@ -6,7 +6,8 @@
  * Config:
  *   { type: 'switcher',
  *     windows: [{ name: 'Word', short: 'W', color: '#2b579a' }, ...],   // erstes = aktiv
- *     targets: ['Musik', 'Word'] }                                     // nacheinander dorthin wechseln
+ *     targets: ['Musik', 'Word'],                                      // nacheinander dorthin wechseln
+ *     modifier: 'Alt' }        // optional; Standard: Alt (Windows) bzw. Cmd (Mac)
  */
 (function (TM) {
   const { esc } = TM.ui;
@@ -19,6 +20,10 @@
       let open = false;
       let pick = 1;
       let i = 0;
+      const MOD = TM.keys.token(cfg.modifier || (TM.platform.isMac() ? 'Cmd' : 'Alt'));
+      const modKey = `{${MOD}}`;
+      const NEXT = TM.keys.canon(`${MOD}+Tab`);
+      const PREV = TM.keys.canon(`${MOD}+Shift+Tab`);
 
       TM.keys.setSticky(true);
 
@@ -67,7 +72,7 @@
             return `<div class="sw-card${k === pick ? ' is-picked' : ''}" style="--app-color:${w.color}"><span class="tb-app-letter big">${esc(w.short)}</span><span>${esc(w.name)}</span></div>`;
           })
           .join('');
-        caption.textContent = `Alt loslassen wechselt zu: ${wins[order[pick]].name}`;
+        caption.textContent = `${TM.keys.label(MOD)} loslassen wechselt zu: ${wins[order[pick]].name}`;
       }
 
       function commit() {
@@ -98,42 +103,42 @@
       }
 
       const off = TM.keys.on((e) => {
-        if (e.type === 'release' && e.token === 'Alt') {
+        if (e.type === 'release' && e.token === MOD) {
           commit();
           return;
         }
-        if (e.type === 'latch' && e.token === 'Alt' && e.on) {
-          api.say('Alt ist eingerastet. Jetzt {Tab} tippen – so oft, bis das richtige Fenster markiert ist.', 'info');
+        if (e.type === 'latch' && e.token === MOD && e.on) {
+          api.say(`${modKey} ist eingerastet. Jetzt {Tab} tippen – so oft, bis das richtige Fenster markiert ist.`, 'info');
           return;
         }
         if (e.type !== 'combo') return;
         const c = TM.keys.canon(e.combo);
-        if (c === 'Alt+Tab' || c === 'Alt+Shift+Tab') {
+        if (c === NEXT || c === PREV) {
           if (e.event) e.event.preventDefault();
           if (!open) {
             open = true;
-            pick = c === 'Alt+Tab' ? 1 : order.length - 1;
+            pick = c === NEXT ? 1 : order.length - 1;
           } else {
-            pick = (pick + (c === 'Alt+Tab' ? 1 : -1) + order.length) % order.length;
+            pick = (pick + (c === NEXT ? 1 : -1) + order.length) % order.length;
           }
           renderOverlay();
-          if (e.source === 'virtual' || TM.keys.isLatched('Alt')) {
-            api.say('Fertig ausgewählt? Dann klick auf der Bildschirmtastatur nochmal auf {Alt} zum Loslassen.', 'info');
+          if (e.source === 'virtual' || TM.keys.isLatched(MOD)) {
+            api.say(`Fertig ausgewählt? Dann klick auf der Bildschirmtastatur nochmal auf ${modKey} zum Loslassen.`, 'info');
           }
-        } else if (open && c === 'Alt+Escape') {
+        } else if (open && c === TM.keys.canon(`${MOD}+Escape`)) {
           open = false;
           renderOverlay();
-        } else if (c === 'Tab' && !TM.keys.isHeld('Alt')) {
-          // ohne Alt: nichts tun, damit der Fokus nicht wegspringt
+        } else if (c === 'Tab' && !TM.keys.isHeld(MOD)) {
+          // ohne Sondertaste: nichts tun, damit der Fokus nicht wegspringt
         } else if (TM.keys.looksLikeAttempt(e)) {
-          api.wrong(e.combo, 'Alt+Tab');
+          api.wrong(e.combo, NEXT);
         }
       });
 
       renderDesk();
-      api.steps(targets.map((t) => `Wechsle zu <strong>${esc(t)}</strong> mit {Alt+Tab}`));
+      api.steps(targets.map((t) => `Wechsle zu <strong>${esc(t)}</strong> mit {${NEXT}}`));
       api.step(0);
-      api.targets('Alt+Tab');
+      api.targets(NEXT);
 
       return {
         destroy() {

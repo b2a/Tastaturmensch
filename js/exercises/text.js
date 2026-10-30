@@ -94,8 +94,8 @@
 
       const off = TM.keys.on((e) => {
         if (e.type !== 'combo' || i >= steps.length) return;
-        if (e.combo === 'Ctrl+C' || e.combo === 'Ctrl+X') copied = ctx().selected;
-        if (e.combo === 'Ctrl+A' || (e.mods.includes('Shift') && /^(Arrow|Home|End|Page)/.test(e.key))) selSource = 'keyboard';
+        if (TM.keys.matches(e.combo, ['Ctrl+C', 'Ctrl+X', 'Cmd+C', 'Cmd+X'])) copied = ctx().selected;
+        if (TM.keys.matches(e.combo, ['Ctrl+A', 'Cmd+A']) || (e.mods.includes('Shift') && /^(Arrow|Home|End|Page)/.test(e.key))) selSource = 'keyboard';
         const st = steps[i];
         if (st.combo && TM.keys.matches(e.combo, st.combo)) {
           count++;

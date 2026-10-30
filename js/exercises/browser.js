@@ -98,11 +98,16 @@
       for (let n = 1; n <= 9; n++) {
         ACTIONS['Ctrl+' + n] = () => { s.active = n === 9 ? s.tabs.length - 1 : Math.min(n - 1, s.tabs.length - 1); };
       }
+      // Für den Mac umrechnen (Strg → Cmd, F5 → Cmd+R …)
+      const LOOKUP = {};
+      Object.keys(ACTIONS).forEach((k) => {
+        LOOKUP[TM.keys.canon(TM.platform.map(k))] = ACTIONS[k];
+      });
 
       const off = TM.keys.on((e) => {
         if (e.type !== 'combo') return;
         const c = TM.keys.canon(e.combo);
-        const act = ACTIONS[c];
+        const act = LOOKUP[c];
         if (!act) {
           if (TM.keys.looksLikeAttempt(e) && steps[i]) api.wrong(e.combo, steps[i].combo);
           return;

@@ -73,6 +73,12 @@ TM.addChapter({
         <p>Mit <strong>{Ctrl+V}</strong> setzt du es an der neuen Stelle wieder ein.</p>
         <p>Im Explorer verschiebst du so Dateien in einen anderen Ordner.</p>`,
       tip: 'Eine ganze Zeile markierst du schnell so: Cursor ans Zeilenende, dann {Shift+Home}.',
+      mac: {
+        explain: `
+          <p><strong>{Cmd+X}</strong> schneidet das Markierte aus: Es verschwindet und liegt in der Zwischenablage.</p>
+          <p>Mit <strong>{Cmd+V}</strong> setzt du es an der neuen Stelle wieder ein.</p>
+          <p>Im Finder geht Ausschneiden bei Dateien nicht. Dort kopierst du mit {Cmd+C} und verschiebst beim Einsetzen mit {Cmd+Alt+V}.</p>`,
+      },
       cheats: [{ keys: 'Ctrl+X', text: 'Ausschneiden (zum Verschieben)' }],
       exercise: {
         type: 'text',
@@ -107,6 +113,13 @@ TM.addChapter({
         <p><strong>{Ctrl+Y}</strong> stellt einen rückgängig gemachten Schritt wieder her.</p>
         <p>Das klappt sogar im Explorer: Datei aus Versehen gelöscht oder verschoben? {Ctrl+Z}!</p>`,
       tip: 'In manchen Programmen heißt Wiederholen {Ctrl+Shift+Z} statt {Ctrl+Y}.',
+      mac: {
+        explain: `
+          <p><strong>{Cmd+Z}</strong> macht den letzten Schritt rückgängig – auch mehrmals hintereinander.</p>
+          <p><strong>{Cmd+Shift+Z}</strong> stellt einen rückgängig gemachten Schritt wieder her.</p>
+          <p>Das klappt sogar im Finder: Datei aus Versehen in den Papierkorb gelegt? {Cmd+Z}!</p>`,
+        tip: 'In Word und einigen anderen Programmen geht Wiederholen auch mit {Cmd+Y}.',
+      },
       cheats: [
         { keys: 'Ctrl+Z', text: 'Rückgängig' },
         { keys: 'Ctrl+Y', text: 'Wiederherstellen' },
@@ -130,6 +143,7 @@ TM.addChapter({
           {
             say: 'Doch lieber weg? Mit {Ctrl+Y|Ctrl+Shift+Z} wiederholst du das Löschen.',
             combo: ['Ctrl+Y', 'Ctrl+Shift+Z'],
+            mac: { say: 'Doch lieber weg? Mit {Cmd+Shift+Z} wiederholst du das Löschen.', combo: ['Cmd+Shift+Z', 'Cmd+Y'] },
             test: (c) => !c.text.includes('wichtig'),
           },
         ],
@@ -179,6 +193,15 @@ TM.addChapter({
         <p><strong>{Ctrl+F}</strong> öffnet die Suche: Wort eintippen, mit Enter von Treffer zu Treffer springen.</p>
         <p><strong>{Ctrl+P}</strong> öffnet den Druckdialog (auch zum Speichern als PDF).</p>`,
       tip: '{F12} öffnet in Word und Excel direkt „Speichern unter“.',
+      mac: {
+        tip: '{Cmd+Shift+S} öffnet in vielen Programmen „Speichern unter“ bzw. „Duplizieren“.',
+        cheats: [
+          { keys: 'Cmd+S', text: 'Sichern' },
+          { keys: 'Cmd+F', text: 'Suchen' },
+          { keys: 'Cmd+P', text: 'Drucken' },
+          { keys: 'Cmd+Shift+S', text: 'Speichern unter / Duplizieren' },
+        ],
+      },
       cheats: [
         { keys: 'Ctrl+S', text: 'Speichern' },
         { keys: 'Ctrl+F', text: 'Suchen' },

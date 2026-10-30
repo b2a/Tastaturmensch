@@ -12,10 +12,12 @@
     order: 3,
     title: 'Datei-Explorer',
     description: 'Dateien gezielt auswählen, umbenennen und flott durch Ordner navigieren.',
+    mac: { title: 'Finder' },
     lessons: [
       {
         id: 'explorer-auswahl',
         title: 'Dateien auswählen mit Strg & Shift',
+        mac: { title: 'Dateien auswählen mit Cmd & Shift' },
         level: 1,
         keys: ['Ctrl+Klick', 'Shift+Klick'],
         summary: 'Einzelne Dateien herauspicken oder einen ganzen Block auf einmal auswählen.',
@@ -51,6 +53,7 @@
           <p>Mit den <strong>Pfeiltasten</strong> wanderst du durch die Liste, mit <strong>{Shift}</strong> dazu erweiterst du die Auswahl.</p>
           <p>{Escape} hebt die Auswahl wieder auf.</p>`,
         tip: 'Einfach den Anfang eines Dateinamens tippen – der Explorer springt direkt dorthin.',
+        mac: { tip: 'Einfach den Anfang eines Dateinamens tippen – der Finder springt direkt dorthin. Die Leertaste zeigt eine Vorschau (Quick Look).' },
         cheats: [
           { keys: 'Ctrl+A', text: 'Alle Dateien auswählen' },
           { keys: 'Shift+ArrowDown', text: 'Auswahl erweitern (auch ↑)' },
@@ -83,6 +86,17 @@
           <p>Mit {Enter} bestätigen, mit {Escape} abbrechen.</p>
           <p>Profi-Trick: Mehrere Dateien auswählen und {F2} drücken benennt alle auf einmal – mit Nummern.</p>`,
         tip: '{F2} funktioniert auch in Excel: Es öffnet die Zelle zum Bearbeiten.',
+        mac: {
+          title: 'Umbenennen mit Return',
+          keys: ['Enter'],
+          summary: 'Im Finder ist es ganz einfach: Datei auswählen, Return drücken, lostippen.',
+          explain: `
+            <p>Datei auswählen und <strong>{Enter}</strong> drücken – schon kannst du den Namen ändern. Der Finder markiert dabei nur den Namen, nicht die Endung.</p>
+            <p>Mit {Enter} bestätigen, mit {Escape} abbrechen.</p>
+            <p>Öffnen geht im Finder übrigens mit {Cmd+ArrowDown} oder {Cmd+O}.</p>`,
+          tip: 'Mehrere Dateien auf einmal umbenennen: markieren, Rechtsklick → „Umbenennen …“.',
+          cheats: [{ keys: 'Enter', text: 'Umbenennen (Finder)' }],
+        },
         cheats: [{ keys: 'F2', text: 'Umbenennen (Excel: Zelle bearbeiten)' }],
         exercise: {
           type: 'explorer',
@@ -104,6 +118,23 @@
               ok: 'Drei Dateien auf einmal umbenannt!',
             },
           ],
+          mac: {
+            steps: [
+              {
+                say: 'Wähle „Entwurf.docx“ aus und drück {Enter}. Tipp „Final“ und bestätige nochmal mit {Enter}.',
+                target: 'Enter',
+                renamed: (files) => files.some((f) => f.toLowerCase() === 'final.docx'),
+                via: 'f2',
+                ok: 'Umbenannt – die Endung .docx ist geblieben.',
+              },
+              {
+                say: 'Gleich nochmal: Benenne „Notizen.txt“ in „Ideen“ um – mit {Enter}.',
+                target: 'Enter',
+                renamed: (files) => files.some((f) => f.toLowerCase() === 'ideen.txt'),
+                via: 'f2',
+              },
+            ],
+          },
         },
       },
 
@@ -118,6 +149,31 @@
           <p><strong>{Ctrl+Shift+N}</strong> legt im Explorer einen neuen Ordner an.</p>
           <p><strong>{Alt+ArrowUp}</strong> springt eine Ordnerebene nach oben, {Alt+ArrowLeft} geht zurück.</p>`,
         tip: '{Alt+Enter} zeigt die Eigenschaften der ausgewählten Datei, z. B. ihre Größe.',
+        mac: {
+          title: 'Finder-Turbo',
+          keys: ['Cmd+Shift+N', 'Cmd+ArrowUp', 'Cmd+Backspace'],
+          summary: 'Neuer Ordner, eine Ebene höher, ab in den Papierkorb – alles per Tastatur.',
+          explain: `
+            <p><strong>{Cmd+Shift+N}</strong> legt im Finder einen neuen Ordner an.</p>
+            <p><strong>{Cmd+ArrowUp}</strong> springt eine Ordnerebene nach oben, {Cmd+ArrowDown} öffnet den ausgewählten Ordner.</p>
+            <p><strong>{Cmd+Backspace}</strong> legt die ausgewählte Datei in den Papierkorb.</p>`,
+          tip: '{Cmd+I} zeigt Informationen zur Datei, z. B. ihre Größe. {Cmd+Shift+G} öffnet „Gehe zu Ordner“.',
+          cheats: [
+            { keys: 'Cmd+Shift+N', text: 'Neuer Ordner (im Finder)' },
+            { keys: 'Cmd+ArrowUp', text: 'Eine Ordnerebene höher' },
+            { keys: 'Cmd+Backspace', text: 'In den Papierkorb legen' },
+            { keys: 'Cmd+I', text: 'Informationen anzeigen' },
+          ],
+          exercise: {
+            type: 'combo',
+            scene: { icon: '📁', title: 'Finder: Dokumente › Projekte', text: 'Drei Dateien, eine davon ist „Alt.docx“.' },
+            steps: [
+              { say: 'Leg einen neuen Ordner an: {Cmd+Shift+N}.', combo: 'Cmd+Shift+N', effect: { icon: '🗂️', title: 'Neuer Ordner', text: 'Name eintippen, mit Return bestätigen.' } },
+              { say: 'Leg „Alt.docx“ in den Papierkorb: {Cmd+Backspace}.', combo: 'Cmd+Backspace', effect: { icon: '🗑️', title: 'Im Papierkorb', text: 'Versehen? {Cmd+Z} holt die Datei zurück.' } },
+              { say: 'Spring eine Ebene höher: {Cmd+ArrowUp}.', combo: 'Cmd+ArrowUp', effect: { icon: '⬆️', title: 'Eine Ebene höher', text: 'Von „Dokumente › Projekte“ zurück zu „Dokumente“.' } },
+            ],
+          },
+        },
         cheats: [
           { keys: 'Win+E', text: 'Explorer öffnen' },
           { keys: 'Ctrl+Shift+N', text: 'Neuer Ordner (im Explorer)' },

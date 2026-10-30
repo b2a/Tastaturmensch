@@ -7,16 +7,26 @@
   const k = (t, l, w = 1, cls = '') => ({ t, l: l === undefined ? t : l, w, cls });
   const letters = (s) => s.split('').map((c) => k(c));
 
-  const ROWS = [
-    [k('Escape', 'Esc'), ...Array.from({ length: 12 }, (_, i) => k('F' + (i + 1), 'F' + (i + 1), 0.9, 'is-fn')), k('Home', 'Pos1', 1.05, 'is-fn'), k('End', 'Ende', 1.05, 'is-fn'), k('Delete', 'Entf', 1.1, 'is-fn')],
-    [k('^'), ...letters('1234567890'), k('ß'), k('´'), k('Backspace', '⌫', 2)],
-    [k('Tab', 'Tab', 1.5), ...letters('QWERTZUIOPÜ'), k('Plus', '+'), k('Enter', 'Enter', 1.5)],
-    [k('CapsLock', '⇪', 1.75, 'is-dead'), ...letters('ASDFGHJKLÖÄ'), k('#'), k('Enter', '↵', 1.25)],
-    [k('Shift', '⇧ Shift', 1.25), k('<'), ...letters('YXCVBNM'), k('Comma', ','), k('Period', '.'), k('Minus', '-'), k('Shift', '⇧ Shift', 2.75)],
-    [k('Ctrl', 'Strg', 1.5), k('Win', '', 1.25), k('Alt', 'Alt', 1.25), k('Space', '', 5.5), k('AltGr', 'Alt Gr', 1.25, 'is-dead'), k('Ctrl', 'Strg', 1.25), { arrows: true, w: 3 }],
-  ];
+  function rows(mac) {
+    return [
+      [
+        k('Escape', mac ? 'esc' : 'Esc'),
+        ...Array.from({ length: 12 }, (_, i) => k('F' + (i + 1), 'F' + (i + 1), 0.9, 'is-fn')),
+        k('Home', mac ? 'home' : 'Pos1', 1.05, 'is-fn'),
+        k('End', mac ? 'end' : 'Ende', 1.05, 'is-fn'),
+        k('Delete', mac ? '⌦' : 'Entf', 1.1, 'is-fn'),
+      ],
+      [k('^'), ...letters('1234567890'), k('ß'), k('´'), k('Backspace', '⌫', 2)],
+      [k('Tab', mac ? '⇥' : 'Tab', 1.5), ...letters('QWERTZUIOPÜ'), k('Plus', '+'), k('Enter', mac ? '↩' : 'Enter', 1.5)],
+      [k('CapsLock', '⇪', 1.75, 'is-dead'), ...letters('ASDFGHJKLÖÄ'), k('#'), k('Enter', '↵', 1.25)],
+      [k('Shift', '⇧ Shift', 1.25), k('<'), ...letters('YXCVBNM'), k('Comma', ','), k('Period', '.'), k('Minus', '-'), k('Shift', '⇧ Shift', 2.75)],
+      mac
+        ? [k('Fn', 'fn', 1.25), k('Ctrl', '⌃ ctrl', 1.25), k('Alt', '⌥ option', 1.25), k('Win', '⌘ cmd', 1.5), k('Space', '', 4), k('Win', '⌘ cmd', 1.5), k('Alt', '⌥', 1.25), { arrows: true, w: 3 }]
+        : [k('Ctrl', 'Strg', 1.5), k('Win', '', 1.25), k('Alt', 'Alt', 1.25), k('Space', '', 5.5), k('AltGr', 'Alt Gr', 1.25, 'is-dead'), k('Ctrl', 'Strg', 1.25), { arrows: true, w: 3 }],
+    ];
+  }
 
-  const MOD_TOKENS = ['Ctrl', 'Shift', 'Alt', 'Win'];
+  const MOD_TOKENS = ['Ctrl', 'Shift', 'Alt', 'Win', 'Fn'];
 
   function keyButton(key) {
     const b = document.createElement('button');
@@ -26,7 +36,7 @@
     if (MOD_TOKENS.includes(key.t)) b.classList.add('is-mod');
     b.dataset.token = key.t;
     b.style.flexGrow = key.w;
-    if (key.t === 'Win') {
+    if (key.t === 'Win' && !key.l) {
       b.innerHTML = TM.ui.WIN_LOGO;
       b.setAttribute('aria-label', 'Windows-Taste');
     } else if (key.t === 'Space') {
@@ -55,7 +65,7 @@
     wrap.setAttribute('role', 'group');
     wrap.setAttribute('aria-label', 'Bildschirmtastatur');
 
-    ROWS.forEach((row) => {
+    rows(TM.platform.isMac()).forEach((row) => {
       const r = document.createElement('div');
       r.className = 'vk-row';
       row.forEach((key) => r.appendChild(key.arrows ? arrowCluster(key.w) : keyButton(key)));

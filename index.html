@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tastaturmensch – Windows-Tastenkombinationen lernen</title>
-  <meta name="description" content="Kurzes Quiz, dann eine persönliche Lernreise durch die wichtigsten Windows-Tastenkombinationen – direkt im Browser ausprobieren.">
+  <title>Tastaturmensch – Tastenkombinationen lernen</title>
+  <meta name="description" content="Kurzes Quiz, dann eine persönliche Lernreise durch die wichtigsten Tastenkombinationen für Windows und Mac – inklusive Word und Excel, direkt im Browser ausprobieren.">
   <meta name="theme-color" content="#f6f5f2">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='4' width='28' height='24' rx='6' fill='%233b5bdb'/%3E%3Ctext x='16' y='22' font-family='system-ui,sans-serif' font-size='15' font-weight='700' text-anchor='middle' fill='white'%3ET%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/styles.css">
@@ -19,6 +19,10 @@
         <a href="#/reise" data-nav="journey">Lernreise</a>
         <a href="#/spickzettel" data-nav="cheatsheet">Spickzettel</a>
       </nav>
+      <div class="platform-switch" role="group" aria-label="Betriebssystem">
+        <button type="button" data-platform-btn="win" aria-pressed="false">Windows</button>
+        <button type="button" data-platform-btn="mac" aria-pressed="false">Mac</button>
+      </div>
       <a class="progress-pill" id="progress-pill" href="#/reise" hidden></a>
     </div>
   </header>
@@ -33,6 +37,7 @@
   <script src="js/core/tm.js"></script>
   <script src="js/core/store.js"></script>
   <script src="js/core/keys.js"></script>
+  <script src="js/core/platform.js"></script>
   <script src="js/core/ui.js"></script>
   <script src="js/core/journey.js"></script>
   <script src="js/components/keyboard.js"></script>
@@ -45,6 +50,8 @@
   <script src="js/exercises/taskbar.js"></script>
   <script src="js/exercises/switcher.js"></script>
   <script src="js/exercises/browser.js"></script>
+  <script src="js/exercises/word.js"></script>
+  <script src="js/exercises/excel.js"></script>
 
   <!-- 3. Inhalte: Quiz + Kapitel (neue Kapitel hier ergänzen) -->
   <script src="js/data/quiz.js"></script>
@@ -54,6 +61,8 @@
   <script src="js/data/lessons/04-fenster.js"></script>
   <script src="js/data/lessons/05-system.js"></script>
   <script src="js/data/lessons/06-browser.js"></script>
+  <script src="js/data/lessons/07-word.js"></script>
+  <script src="js/data/lessons/08-excel.js"></script>
 
   <!-- 4. Ansichten + Start -->
   <script src="js/views/home.js"></script>

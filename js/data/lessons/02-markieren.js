@@ -16,6 +16,7 @@ TM.addChapter({
         <p>{Shift+ArrowRight} und {Shift+ArrowLeft} markieren Zeichen für Zeichen, {Shift+ArrowDown} und {Shift+ArrowUp} ganze Zeilen.</p>
         <p>Zu viel markiert? Einfach mit der Gegenrichtung zurück.</p>`,
       tip: 'Das funktioniert auch im Explorer: {Shift+ArrowDown} erweitert die Dateiauswahl.',
+      mac: { tip: 'Das funktioniert auch im Finder (Listenansicht): {Shift+ArrowDown} erweitert die Dateiauswahl.' },
       cheats: [
         { keys: 'Shift+ArrowRight', text: 'Zeichenweise markieren (auch ←)' },
         { keys: 'Shift+ArrowDown', text: 'Zeilenweise markieren (auch ↑)' },
@@ -47,6 +48,7 @@ TM.addChapter({
       level: 2,
       keys: ['Ctrl+ArrowRight', 'Ctrl+Shift+ArrowRight'],
       summary: 'Mit Strg springt der Cursor Wort für Wort statt Buchstabe für Buchstabe.',
+      mac: { summary: 'Mit der Option-Taste springt der Cursor Wort für Wort statt Buchstabe für Buchstabe.' },
       explain: `
         <p><strong>{Ctrl+ArrowRight}</strong> und <strong>{Ctrl+ArrowLeft}</strong> springen ein ganzes Wort weiter.</p>
         <p>Mit zusätzlichem {Shift} wird dabei markiert: <strong>{Ctrl+Shift+ArrowRight}</strong> wählt Wort für Wort aus.</p>`,
@@ -58,6 +60,7 @@ TM.addChapter({
       exercise: {
         type: 'text',
         text: 'Mit Strg springst du blitzschnell von Wort zu Wort durch jeden Text.',
+        mac: { text: 'Mit Option springst du blitzschnell von Wort zu Wort durch jeden Text.' },
         rows: 2,
         steps: [
           { say: 'Klick an den Anfang des Textes und spring mit {Ctrl+ArrowRight} dreimal ein Wort weiter.', combo: 'Ctrl+ArrowRight', times: 3, ok: 'Hopp, hopp, hopp!' },
@@ -78,6 +81,13 @@ TM.addChapter({
       level: 2,
       keys: ['Home', 'End', 'Shift+Home', 'Ctrl+End'],
       summary: 'Pos1 und Ende bringen dich sofort an den Anfang oder das Ende einer Zeile.',
+      mac: {
+        summary: 'Cmd und die Pfeiltasten bringen dich sofort an den Anfang oder das Ende einer Zeile.',
+        explain: `
+          <p><strong>{Cmd+ArrowLeft}</strong> springt an den Zeilenanfang, <strong>{Cmd+ArrowRight}</strong> ans Zeilenende.</p>
+          <p>Mit {Shift} markierst du dabei: {Cmd+Shift+ArrowLeft} wählt alles bis zum Zeilenanfang aus.</p>
+          <p>{Cmd+ArrowUp} und {Cmd+ArrowDown} bringen dich an den Anfang oder das Ende des <em>ganzen</em> Textes.</p>`,
+      },
       explain: `
         <p><strong>{Home}</strong> springt an den Zeilenanfang, <strong>{End}</strong> ans Zeilenende.</p>
         <p>Mit {Shift} markierst du dabei: {Shift+Home} wählt alles bis zum Zeilenanfang aus.</p>
@@ -87,7 +97,8 @@ TM.addChapter({
         { keys: 'Home', text: 'Zeilenanfang' },
         { keys: 'End', text: 'Zeilenende' },
         { keys: 'Shift+Home', text: 'Bis Zeilenanfang markieren (auch Ende)' },
-        { keys: 'Ctrl+Home', text: 'Textanfang (Ctrl+End: Textende)' },
+        { keys: 'Ctrl+Home', text: 'Textanfang' },
+        { keys: 'Ctrl+End', text: 'Textende' },
       ],
       exercise: {
         type: 'text',
@@ -122,6 +133,13 @@ TM.addChapter({
       level: 2,
       keys: ['Ctrl+Backspace', 'Ctrl+Delete'],
       summary: 'Statt zehnmal die Rücktaste: Strg löscht ein ganzes Wort auf einmal.',
+      mac: {
+        summary: 'Statt zehnmal die Löschtaste: Mit Option löschst du ein ganzes Wort auf einmal.',
+        explain: `
+          <p><strong>{Alt+Backspace}</strong> löscht das Wort links vom Cursor.</p>
+          <p><strong>{Alt+Delete}</strong> löscht das Wort rechts vom Cursor. Am MacBook ohne Entf-Taste drückst du dafür {Fn+Alt+Backspace}.</p>
+          <p>Und {Cmd+Backspace} löscht sogar alles bis zum Zeilenanfang.</p>`,
+      },
       explain: `
         <p><strong>{Ctrl+Backspace}</strong> löscht das Wort links vom Cursor.</p>
         <p><strong>{Ctrl+Delete}</strong> löscht das Wort rechts vom Cursor.</p>`,

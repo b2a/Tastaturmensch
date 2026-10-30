@@ -6,7 +6,7 @@
   TM.registerView('quiz', {
     title: 'Quiz',
     render(main) {
-      const questions = TM.quiz;
+      const questions = TM.quizItems();
       const answers = {};
       let qi = 0;
       let answered = false;

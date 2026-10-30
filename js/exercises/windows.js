@@ -7,7 +7,8 @@
  *     monitors: 1 | 2,
  *     start: { monitor: 0, snap: 'normal' },   // normal | left | right | max | tl | tr | bl | br | min
  *     app: 'Notizen',
- *     steps: [{ say, target: 'Win+ArrowLeft', expect: { snap: 'left', monitor: 0 } }] }
+ *     steps: [{ say, target: 'Win+ArrowLeft', expect: { snap: 'left', monitor: 0 } }],
+ *     mode: 'mac' }   // optional: Fenster-Anordnen von macOS 15 (Fn+Ctrl+Pfeile, Fn+Ctrl+F)
  */
 (function (TM) {
   const { esc } = TM.ui;
@@ -22,9 +23,12 @@
     bl: [0, 50, 50, 50],
     br: [50, 50, 50, 50],
     min: [16, 12, 60, 64],
+    th: [0, 0, 100, 50],
+    bh: [0, 50, 100, 50],
   };
   const SNAP_TEXT = {
     normal: 'frei schwebend', left: 'links angedockt', right: 'rechts angedockt', max: 'maximiert',
+    th: 'obere Hälfte', bh: 'untere Hälfte',
     tl: 'oben links (Viertel)', tr: 'oben rechts (Viertel)', bl: 'unten links (Viertel)', br: 'unten rechts (Viertel)', min: 'minimiert',
   };
 
@@ -75,6 +79,19 @@
         return null;
     }
     return n;
+  }
+
+  /* macOS 15+: jede Kombi setzt direkt eine Position. */
+  const MAC_KEYS = {
+    'Fn+Ctrl+ArrowLeft': 'left',
+    'Fn+Ctrl+ArrowRight': 'right',
+    'Fn+Ctrl+ArrowUp': 'th',
+    'Fn+Ctrl+ArrowDown': 'bh',
+    'Fn+Ctrl+F': 'max',
+  };
+  function transitionMac(s, combo) {
+    const snap = MAC_KEYS[combo];
+    return snap ? Object.assign({}, s, { snap }) : null;
   }
 
   TM.registerExercise('windows', {
@@ -150,7 +167,8 @@
 
       const off = TM.keys.on((e) => {
         if (e.type !== 'combo') return;
-        const next = transition(state, TM.keys.canon(e.combo), monitors);
+        const c = TM.keys.canon(e.combo);
+        const next = cfg.mode === 'mac' ? transitionMac(state, c) : transition(state, c, monitors);
         if (!next) {
           if (TM.keys.looksLikeAttempt(e) && steps[i]) api.wrong(e.combo, steps[i].target);
           return;

@@ -9,12 +9,15 @@
  * die zweite Taste kommt dann von der echten Tastatur (oder auch per Klick).
  */
 (function (TM) {
-  const MODS = ['Ctrl', 'Win', 'Alt', 'Shift'];
+  /* "Win" = Meta-Taste (Windows-Taste bzw. ⌘ Cmd am Mac). "Fn" gibt es nur virtuell. */
+  const MODS = ['Fn', 'Ctrl', 'Win', 'Alt', 'Shift'];
+  const isMac = () => Boolean(TM.platform && TM.platform.isMac());
 
   const ALIAS = {
     strg: 'Ctrl', ctrl: 'Ctrl', control: 'Ctrl',
-    win: 'Win', meta: 'Win', os: 'Win', windows: 'Win',
-    alt: 'Alt',
+    win: 'Win', meta: 'Win', os: 'Win', windows: 'Win', cmd: 'Win', command: 'Win', '⌘': 'Win',
+    alt: 'Alt', option: 'Alt', opt: 'Alt', '⌥': 'Alt',
+    fn: 'Fn',
     shift: 'Shift', umschalt: 'Shift',
     esc: 'Escape', escape: 'Escape',
     entf: 'Delete', del: 'Delete', delete: 'Delete',
@@ -37,17 +40,40 @@
     Escape: 'Esc', Delete: 'Entf', Home: 'Pos1', End: 'Ende',
     Backspace: 'Rücktaste', Enter: 'Enter', Tab: 'Tab', Space: 'Leertaste',
     Plus: '+', Minus: '-', Period: '.', Comma: ',',
-    PageUp: 'Bild ↑', PageDown: 'Bild ↓', PrintScreen: 'Druck', Klick: 'Klick',
+    PageUp: 'Bild ↑', PageDown: 'Bild ↓', PrintScreen: 'Druck', Klick: 'Klick', Fn: 'Fn',
   };
 
-  /* Kombis, die Windows oder der Browser schlucken, bevor die Seite sie sieht. */
-  const RESERVED = [
-    'Ctrl+T', 'Ctrl+W', 'Ctrl+N', 'Ctrl+Shift+T', 'Ctrl+Shift+N', 'Ctrl+Shift+W',
-    'Ctrl+Tab', 'Ctrl+Shift+Tab', 'Alt+Tab', 'Alt+Shift+Tab', 'Alt+F4',
-    'Ctrl+Shift+Escape', 'Ctrl+Alt+Delete',
-  ];
-  /* Kombis, die diese Seite schließen würden, wenn man sie echt drückt. */
-  const DANGEROUS = ['Ctrl+W', 'Alt+F4', 'Ctrl+Shift+W'];
+  const MAC_LABEL = {
+    Ctrl: '⌃ Ctrl', Win: '⌘ Cmd', Alt: '⌥ Option', Shift: '⇧ Shift', Fn: 'fn',
+    Backspace: '⌫', Delete: '⌦ Entf', Enter: '↩ Return', Escape: 'esc', Home: 'Home', End: 'End', Tab: '⇥ Tab',
+    PageUp: 'Page ↑', PageDown: 'Page ↓',
+  };
+
+  /* Kombis, die das System oder der Browser schlucken, bevor die Seite sie sieht. */
+  const LISTS = {
+    win: {
+      reserved: [
+        'Ctrl+T', 'Ctrl+W', 'Ctrl+N', 'Ctrl+Shift+T', 'Ctrl+Shift+N', 'Ctrl+Shift+W',
+        'Ctrl+Tab', 'Ctrl+Shift+Tab', 'Alt+Tab', 'Alt+Shift+Tab', 'Alt+F4',
+        'Ctrl+Shift+Escape', 'Ctrl+Alt+Delete',
+      ],
+      // würden diese Seite schließen
+      dangerous: ['Ctrl+W', 'Alt+F4', 'Ctrl+Shift+W'],
+      // könnten die Seite neu laden (werden abgefangen, aber sicher ist sicher)
+      unload: ['Ctrl+R', 'F5', 'Ctrl+F5'],
+    },
+    mac: {
+      reserved: [
+        'Cmd+T', 'Cmd+W', 'Cmd+N', 'Cmd+Q', 'Cmd+H', 'Cmd+M', 'Cmd+Alt+H',
+        'Cmd+Shift+T', 'Cmd+Shift+N', 'Cmd+Shift+W', 'Cmd+Tab', 'Cmd+Shift+Tab',
+        'Ctrl+Tab', 'Ctrl+Shift+Tab', 'Cmd+Space', 'Ctrl+Space', 'Ctrl+Cmd+Space', 'Ctrl+Cmd+Q', 'Ctrl+Cmd+F',
+        'Cmd+Alt+Escape', 'Cmd+Shift+3', 'Cmd+Shift+4', 'Cmd+Shift+5', 'Ctrl+Cmd+Shift+4',
+        'Ctrl+ArrowUp', 'Ctrl+ArrowDown', 'Ctrl+ArrowLeft', 'Ctrl+ArrowRight',
+      ],
+      dangerous: ['Cmd+W', 'Cmd+Q', 'Cmd+Shift+W'],
+      unload: ['Cmd+R', 'Cmd+Shift+R'],
+    },
+  };
 
   function token(raw) {
     const s = String(raw).trim();
@@ -76,18 +102,29 @@
     return [].concat(targets).some((t) => canon(t) === c);
   }
 
-  const RESERVED_C = RESERVED.map(canon);
-  const DANGEROUS_C = DANGEROUS.map(canon);
+  const listCache = {};
+  function list(kind) {
+    const p = isMac() ? 'mac' : 'win';
+    const key = p + kind;
+    if (!listCache[key]) listCache[key] = LISTS[p][kind].map(canon);
+    return listCache[key];
+  }
 
   function isReserved(combo) {
-    return parse(combo).mods.includes('Win') || RESERVED_C.includes(canon(combo));
+    const mods = parse(combo).mods;
+    if (mods.includes('Fn')) return true;
+    if (!isMac() && mods.includes('Win')) return true;
+    return list('reserved').includes(canon(combo));
   }
   function isDangerous(combo) {
-    return DANGEROUS_C.includes(canon(combo));
+    return list('dangerous').includes(canon(combo));
+  }
+  function risksUnload(combo) {
+    return isDangerous(combo) || list('unload').includes(canon(combo));
   }
 
   function label(tok) {
-    return LABEL[tok] ?? tok;
+    return (isMac() && MAC_LABEL[tok]) || LABEL[tok] || tok;
   }
 
   /* ---------- Ereignisse ---------- */
@@ -96,6 +133,7 @@
   const listeners = new Set();
   const latched = new Set();
   const held = new Set();
+  const downKeys = new Set();
   let sticky = false;
 
   function emit(evt) {
@@ -118,6 +156,12 @@
     if (k === ' ' || e.code === 'Space') return 'Space';
     if (k === '+') return 'Plus';
     if (k === '-') return 'Minus';
+    // Mac: Option+Buchstabe liefert Sonderzeichen (z. B. ⌥+H = ˙) – dann den Buchstaben der Taste nehmen
+    if (e.altKey && /^Key[A-Z]$/.test(e.code) && !/^[a-zäöü]$/i.test(k)) {
+      let letter = e.code.slice(3);
+      if (/^de/i.test(navigator.language || '')) letter = letter === 'Y' ? 'Z' : letter === 'Z' ? 'Y' : letter;
+      return letter;
+    }
     if (k.length === 1) return k.toUpperCase();
     return token(k);
   }
@@ -149,6 +193,7 @@
     }
     const key = keyFromEvent(e);
     if (!key) return;
+    downKeys.add(key);
     emit({ type: 'down', token: key, source: 'real', event: e });
     const usedLatch = latched.size > 0;
     const mods = new Set([...realMods(e), ...latched]);
@@ -170,15 +215,24 @@
       held.delete(mod);
       emit({ type: 'up', token: mod, source: 'real', event: e });
       emit({ type: 'release', token: mod, source: 'real', event: e });
+      // Mac: Solange ⌘ gedrückt ist, kommen für andere Tasten keine keyup-Ereignisse
+      if (mod === 'Win') {
+        downKeys.forEach((t) => emit({ type: 'up', token: t, source: 'real' }));
+        downKeys.clear();
+      }
       return;
     }
     const key = keyFromEvent(e);
-    if (key) emit({ type: 'up', token: key, source: 'real', event: e });
+    if (key) {
+      downKeys.delete(key);
+      emit({ type: 'up', token: key, source: 'real', event: e });
+    }
   });
 
   window.addEventListener('blur', () => {
-    held.forEach((t) => emit({ type: 'up', token: t, source: 'real' }));
+    [...held, ...downKeys].forEach((t) => emit({ type: 'up', token: t, source: 'real' }));
     held.clear();
+    downKeys.clear();
   });
 
   /* ---------- Virtuelle Tasten (Bildschirmtastatur) ---------- */
@@ -227,6 +281,7 @@
     label,
     isReserved,
     isDangerous,
+    risksUnload,
     on(fn) {
       listeners.add(fn);
       return () => listeners.delete(fn);

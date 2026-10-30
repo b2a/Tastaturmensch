@@ -2247,3 +2247,296 @@ main:focus {
     break-inside: avoid;
   }
 }
+
+/* =========================================================
+   Windows / Mac
+   ========================================================= */
+
+.platform-switch {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+}
+.platform-switch button {
+  min-height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: 600 13px/1 var(--font);
+  cursor: pointer;
+  transition: background-color var(--motion-150) var(--ease-out), color var(--motion-150) var(--ease-out);
+}
+.platform-switch button:hover {
+  color: var(--text);
+}
+.platform-switch button[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.platform-hint {
+  font-size: 14px;
+  color: var(--muted);
+}
+.link-btn {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+@media (max-width: 560px) {
+  .topbar-inner {
+    gap: var(--s2);
+  }
+  .progress-pill {
+    display: none;
+  }
+  .platform-switch button {
+    padding: 0 9px;
+  }
+}
+
+/* Mac-Fensterrahmen: Ampel-Punkte links */
+html[data-platform='mac'] .win-titlebar {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+html[data-platform='mac'] .win-controls {
+  gap: 6px;
+}
+html[data-platform='mac'] .win-controls i,
+html[data-platform='mac'] .win-controls i:first-child {
+  width: 10px;
+  height: 10px;
+  border: 0;
+  border-radius: 50%;
+  opacity: 1;
+  align-self: auto;
+  background: #ff5f57;
+}
+html[data-platform='mac'] .win-controls i:nth-child(2) {
+  background: #febc2e;
+}
+html[data-platform='mac'] .win-controls i:nth-child(3) {
+  background: #28c840;
+}
+html[data-platform='mac'] .tb-start {
+  display: none;
+}
+html[data-platform='mac'] .win-title {
+  margin-left: var(--s2);
+}
+
+/* =========================================================
+   Übung: Word
+   ========================================================= */
+
+.word {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.wd-ribbon {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px var(--s3);
+  background: var(--window);
+  border-bottom: 1px solid var(--window-line);
+}
+.wd-btn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 28px;
+  border-radius: 5px;
+  font: 15px/1 Georgia, 'Times New Roman', serif;
+  color: var(--text);
+  border: 1px solid transparent;
+  transition: background-color var(--motion-150) var(--ease-out), border-color var(--motion-150) var(--ease-out);
+}
+.wd-btn.is-on {
+  background: color-mix(in srgb, #2b579a 18%, transparent);
+  border-color: color-mix(in srgb, #2b579a 45%, transparent);
+}
+.wd-sep {
+  width: 1px;
+  height: 20px;
+  margin: 0 6px;
+  background: var(--window-line);
+}
+.wd-page {
+  padding: var(--s4);
+  max-height: 340px;
+  overflow: auto;
+}
+.wd-doc {
+  max-width: 560px;
+  min-height: 200px;
+  margin: 0 auto;
+  padding: var(--s6) var(--s6);
+  background: #fff;
+  color: #1c1b1a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  font: 16px/1.6 Calibri, Carlito, 'Segoe UI', system-ui, sans-serif;
+  outline: none;
+}
+.wd-doc:focus {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 0 2px var(--accent-soft);
+}
+.wd-doc p {
+  margin: 0 0 var(--s3);
+}
+.wd-doc p:first-child {
+  font-size: 1.25em;
+}
+.wd-doc ::selection {
+  background: rgba(59, 91, 219, 0.28);
+}
+.wd-break {
+  margin: var(--s4) calc(var(--s6) * -1);
+  padding: 4px 0;
+  border-top: 2px dashed #9aa4b8;
+  color: #6b7385;
+  font: 600 11px/1.4 var(--font);
+  text-align: center;
+  user-select: none;
+  animation: fade-in var(--motion-200) var(--ease-out) both;
+}
+@media (max-width: 560px) {
+  .wd-doc {
+    padding: var(--s4);
+  }
+  .wd-break {
+    margin: var(--s3) calc(var(--s4) * -1);
+  }
+}
+
+/* =========================================================
+   Übung: Excel
+   ========================================================= */
+
+.excel {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--window);
+}
+.xl-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: 6px var(--s2);
+  border-bottom: 1px solid var(--window-line);
+  font-size: 13px;
+}
+.xl-name {
+  min-width: 56px;
+  padding: 3px 8px;
+  border: 1px solid var(--window-line);
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.xl-fx {
+  color: var(--muted);
+  font-style: italic;
+  font-family: Georgia, serif;
+}
+.xl-formula {
+  flex: 1;
+  min-height: 24px;
+  padding: 3px 8px;
+  border: 1px solid var(--window-line);
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.xl-wrap {
+  overflow: auto;
+}
+.xl-grid {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 460px;
+  table-layout: fixed;
+  font-size: 13px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.xl-grid:focus-visible {
+  outline-offset: -2px;
+}
+.xl-grid th {
+  background: var(--surface-2);
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 12px;
+  border: 1px solid var(--window-line);
+  height: 24px;
+  cursor: pointer;
+}
+.xl-grid th.in-sel {
+  background: color-mix(in srgb, #217346 18%, var(--surface-2));
+  color: #1b5e3a;
+  font-weight: 700;
+}
+.xl-corner {
+  width: 36px;
+}
+.xl-grid td {
+  border: 1px solid var(--window-line);
+  height: 26px;
+  padding: 0 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  cursor: cell;
+}
+.xl-grid td.is-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.xl-grid td.in-sel {
+  background: color-mix(in srgb, #217346 12%, transparent);
+}
+.xl-grid td.is-active {
+  outline: 2px solid #217346;
+  outline-offset: -2px;
+}
+.xl-grid tbody tr:first-child td {
+  font-weight: 700;
+}
+.xl-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  padding: 0 6px;
+  font: inherit;
+  color: var(--text);
+  background: var(--window);
+  outline: 2px solid #217346;
+  outline-offset: -2px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .xl-grid th.in-sel {
+    color: #8fd6ad;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wd-break {
+    animation: none;
+  }
+}

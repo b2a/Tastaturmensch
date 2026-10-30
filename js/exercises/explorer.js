@@ -13,7 +13,11 @@
  *            | (names, info) => true,      // … oder eigene Prüfung (info = { indices, files })
  *       via: 'ctrlClick' | 'shiftClick' | 'shiftArrow' | 'ctrlA' | 'f2',   // so muss es passieren
  *       renamed: (files) => true,          // optional: Prüfung nach Umbenennen
- *     }] }
+ *     }],
+ *     renameKey: 'F2',                     // optional; Standard: F2 (Windows) bzw. Enter (Mac-Finder)
+ *     crumb: 'Dieser PC' }                 // optional
+ *
+ * Am Mac heißt das Ding "Finder", Mehrfachauswahl geht mit Cmd statt Strg.
  */
 (function (TM) {
   const { esc } = TM.ui;
@@ -41,6 +45,10 @@
       let renaming = -1;
       let used = {};
       let i = 0;
+      const mac = TM.platform.isMac();
+      const MULTI = mac ? 'Win' : 'Ctrl';
+      const renameKey = TM.keys.canon(cfg.renameKey || (mac ? 'Enter' : 'F2'));
+      const crumb = cfg.crumb || (mac ? 'Macintosh HD › Benutzer' : 'Dieser PC');
 
       stage.innerHTML = `
         <div class="explorer">
@@ -49,7 +57,7 @@
             <span class="win-controls" aria-hidden="true"><i></i><i></i><i></i></span>
           </div>
           <div class="explorer-bar">
-            <span class="explorer-crumb">Dieser PC › ${esc(cfg.folder || 'Dokumente')}</span>
+            <span class="explorer-crumb">${esc(crumb)} › ${esc(cfg.folder || 'Dokumente')}</span>
           </div>
           <div class="explorer-head" aria-hidden="true"><span>Name</span><span>Typ</span><span>Größe</span></div>
           <ul class="explorer-list" role="listbox" aria-multiselectable="true" tabindex="0" aria-label="Dateien in ${esc(cfg.folder || 'Dokumente')}"></ul>
@@ -99,6 +107,8 @@
         render();
       }
       function onRenameKey(e) {
+        // Nicht an den Dokument-Listener weiterreichen (am Mac startet Enter sonst gleich wieder das Umbenennen)
+        if (e.key === 'Enter' || e.key === 'Escape') e.stopPropagation();
         if (e.key === 'Enter') {
           e.preventDefault();
           commitRename(e.target.value);
@@ -138,7 +148,7 @@
         const li = e.target.closest('li[data-i]');
         if (!li || e.target.closest('.rename-input')) return;
         const idx = Number(li.dataset.i);
-        const ctrl = e.ctrlKey || e.metaKey || TM.keys.isHeld('Ctrl');
+        const ctrl = e.ctrlKey || e.metaKey || TM.keys.isHeld(MULTI);
         const shift = e.shiftKey || TM.keys.isHeld('Shift');
         if (shift) {
           const r = range(anchor, idx);
@@ -172,13 +182,13 @@
         const last = files.length - 1;
         let handled = true;
 
-        if (c === 'Ctrl+A' && free) {
+        if (TM.keys.matches(c, ['Ctrl+A', 'Cmd+A']) && free) {
           sel = new Set(files.map((_, idx) => idx));
           used.ctrlA = true;
-        } else if (c === 'F2' && free) {
+        } else if (c === renameKey && free) {
           used.f2 = true;
           if (!sel.size) {
-            api.say('Wähl zuerst eine Datei aus, dann {F2}.', 'warn');
+            api.say(`Wähl zuerst eine Datei aus, dann {${renameKey}}.`, 'warn');
           } else {
             startRename();
             e.event && e.event.preventDefault();
@@ -197,9 +207,9 @@
             sel = new Set([focus]);
             anchor = focus;
           }
-        } else if (c === 'Ctrl+ArrowUp' || c === 'Ctrl+ArrowDown') {
+        } else if (!mac && (c === 'Ctrl+ArrowUp' || c === 'Ctrl+ArrowDown')) {
           focus = c.endsWith('Up') ? Math.max(0, focus - 1) : Math.min(last, focus + 1);
-        } else if (c === 'Ctrl+Space') {
+        } else if (!mac && c === 'Ctrl+Space') {
           if (sel.has(focus)) sel.delete(focus);
           else sel.add(focus);
           anchor = focus;
@@ -246,7 +256,7 @@
       }
       const sameSet = (a, b) => a.length === b.length && b.every((x) => a.includes(x));
       const hintFor = (via) =>
-        TM.ui.rich({ ctrlClick: '{Ctrl}+Klick', shiftClick: '{Shift}+Klick', shiftArrow: '{Shift+ArrowDown}', ctrlA: '{Ctrl+A}', f2: '{F2}' }[via] || 'der Tastatur');
+        TM.ui.rich({ ctrlClick: `{${MULTI}}+Klick`, shiftClick: '{Shift}+Klick', shiftArrow: '{Shift+ArrowDown}', ctrlA: `{${MULTI}+A}`, f2: `{${renameKey}}` }[via] || 'der Tastatur');
 
       render();
       api.steps(steps.map((s) => s.say));
